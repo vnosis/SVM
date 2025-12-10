@@ -101,7 +101,9 @@ def plot_linear_svm_2d(clf, X, y):
             ax.plot([xA,xB],[yA,yB], style, label=label)
 
     a, bcoef, c = w[0], w[1], b
+    clf = LinearSVMConfig()    
     clip_and_plot(a,bcoef,c, 'k-', label='decision')
+    #clip_and_plot(a,bcoef,clf.learning_rate, label='learning rate')
     clip_and_plot(a,bcoef,c-1, 'k--')
     clip_and_plot(a,bcoef,c+1, 'k--')
     ax.legend() 
@@ -165,6 +167,7 @@ class LinearSVM:
         n_samples, n_features = X.shape
 
         # TODO: initialize parameters
+        #we set the weights to be random for each feature
         self.w = self._rng.randn(n_features) * 0.001 
         self.b = 0.0
 
@@ -184,9 +187,11 @@ class LinearSVM:
                 yb = ys[start:end]
 
                 # --- TODO: compute gradients dw, db for this batch ---
+                #we update the weights and bias of batch
                 dw, db = self._batch_gradients(Xb, yb)
 
                 # --- TODO: update parameters ---
+                #we update our weights and bias by stepping by the measurement of our learning rate and the batch weight/bias
                 self.w -= self.config.learning_rate * dw
                 self.b -= self.config.learning_rate * db
 
@@ -225,25 +230,30 @@ class LinearSVM:
         X, y = _check_X_y(X, y)
 
         # TODO: implement hinge loss correctly and return float. COMMENT YOUR CODE!!
-        #Computing scores yi = (wT*xi +b)
         samples = X.shape[0]
         scores = np.zeros(samples)
 
+        #we are calculating the score of each sample 
         for i in range(samples):
             xi = X[i, :]
-
             weighted_sum = np.dot(xi, self.w)
-
             scores[i] = weighted_sum + self.b
 
+        #
         functional_margin = y * scores
+        print(functional_margin)
         
+        #In our paper we defined our hinge loss as max(0, 1-t)
         hinge_loss_components = np.maximum(0, 1 - functional_margin)
-        
+
+        #our summation of our hinge losses which is multiplied by our C
         data_loss = self.config.C * np.sum(hinge_loss_components)
         
+        #We calculate the L2 norm squared magnitude of w, divided by 2. 
+        # 1/2||w||^2 
         regularization_term = 0.5 * np.dot(self.w, self.w)
-        
+
+        #We add the regularization and the sum of our hinge loss which was multiplied by our hyperparameter C 
         total_loss = regularization_term + data_loss
 
         return float(total_loss)
@@ -343,7 +353,18 @@ class LinearSVM:
             raise RuntimeError("Model not fitted.")
 
         #TODO COMMENT YOUR CODE!!
-        return X @ self.w + self.b
+        n_samples, n_features = X.shape
+        scores = np.empty(n_samples, dtype=float)
+
+        for i in range(n_samples):
+            x_i = X[i, :] 
+            weighted_sum = np.dot(x_i, self.w)
+            
+            score_i = weighted_sum + self.b
+            
+            scores[i] = score_i
+
+        return scores
 
     def predict(self, X: np.ndarray) -> np.ndarray:
         """
@@ -403,10 +424,10 @@ class LinearSVM:
         y_pred = self.predict(Xc)
         
         # Compute the number of correct predictions (where y_pred == yc)
-        n_correct = np.sum(y_pred == yc)
+        n = np.sum(y_pred == yc)
         
         # Accuracy is the number of correct predictions divided by the total number of samples
         n_samples = Xc.shape[0]
-        accuracy = n_correct / n_samples
+        accuracy = n / n_samples
         
         return float(accuracy)
