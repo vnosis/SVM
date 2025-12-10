@@ -17,31 +17,16 @@
 \begin{document}
 \maketitle
 
-\begin{abstract}
-In this paper, you will learn that SVMs are better at classifying data by
-a boundary than is almost linearly seperable. In the real world, linearly separable data is very uncommon.
-\end{abstract}
-
 \section{Why SVMs}
 
-When given a dataset of two classes that can be binarily classified, 
-we can most easily separate the classes by a hyperplane using a Perceptron 
-and assuming the classes are linearly separable. But we must ask ourselves,
-what if our data isn’t linearly separable? If it is, will we have one exact 
-solution found in a reasonable time? What if we have more than two classes? 
+When given a dataset of two classes that can be binarily classified, we can most easily separate the classes by a hyperplane using a Perceptron and assuming the classes are linearly separable. But we must ask ourselves, what if our data isn’t linearly separable? If it is, will we have one exact solution found in a reasonable time? What if we have more than two classes? 
 
-This is where the Soft-Margin Support Vector Machine(SVM) answers our machine 
-learning prayers. The problem with the Perceptron algorithm is it will not converge 
-if our data is not linearly separable. If our data is linearly separable we will end up 
-with inconsistent solutions based on the hyperparameter of the learning rate and how our 
-data is sorted. SVM’s are able to combat these problems by using support vectors to find an 
-optimal boundary, margin and unique solution that finds the smallest classification error. If 
-the data is mostly linearly separable we can use a Soft-Margin to generalize our hyperplane.
+This is where the Soft-Margin Support Vector Machine(SVM) answers our machine learning prayers. The problem with the Perceptron algorithm is it will not converge if our data is not linearly separable. If our data is linearly separable we will end up with inconsistent solutions based on the hyperparameter of the learning rate and how our data is sorted. SVM’s are able to combat these problems by using support vectors to find an optimal boundary, margin and unique solution that finds the smallest classification error. If the data is mostly linearly separable we can use a Soft-Margin to generalize our hyperplane.
 
 \section{The concept of the Margin}
 
-When we draw our decision boundary, we want the boundary to be drawn as far away from each class. 
-We call this, maximizing our margin, where the distance from the first class is equally as far from the boundary as the second class. 
+When we draw our decision boundary, we want the boundary to be drawn as far away from each class. We call this, maximizing our margin, where the
+distance from the first class is equally as far from the boundary as the second class. 
 Our margin distance is defined as, 
 
 \[
@@ -50,19 +35,11 @@ r = \frac{1}{\|w\|}, \quad \text{and we also define } \|w\| = 1.
 
 Normalizing $\|w\|$ helps us derive this equation, $y_n (\langle w, x_n \rangle + b) \ge r$, where $y_n \in \{-1, 1\}$ determines if $x_n$ is on the negative or positive side of the linear boundary. The closest point(s) that can be defined as part of a class will be the "Support Vector" that defines our margin. 
 
-However when we have outliers it becomes problematic because our decision boundary 
-and margin will be redefined by this outlier from one class and the a point closest 
-in the other class. If we can see how the graph is drawn with an outlier we will see 
-that our margin is drawn incorrectly and that maybe the point that is an outlier should 
-be removed. This is where the concepts of Hard vs Soft margins come into play. 
+However when we have outliers it becomes problematic because our decision boundary and margin will be redefined by this outlier from one class and the a point closest in the other class. If we can see how the graph is drawn with an outlier we will see that our margin is drawn incorrectly and that maybe the point that is an outlier should be removed. This is where the concepts of Hard vs Soft margins come into play. 
 
 \section{Hard VS Soft}
 
-Sometimes data is not linearly separable, but we would still like to classify 
-it with an SVM. We know that hard margin SVMs enforce a decision boundary that will 
-not accept any margin errors when classifying data, where everything on one side of 
-the boundary gets classified as $+1$ and everything on the other side gets classified as $-1$. 
-We use the following optimization problem to define our hard margin:
+Sometimes data is not linearly separable, but we would still like to classify it with an SVM. We know that hard margin SVMs enforce a decision boundary that will not accept any margin errors when classifying data, where everything on one side of the boundary gets classified as $+1$ and everything on the other side gets classified as $-1$. We use the following optimization problem to define our hard margin:
 
 \[
 \min_{w,b} \frac{1}{2}\|w\|^2 
@@ -105,9 +82,9 @@ Using the hinge loss, our goal is to minimize the total loss while applying regu
 + C \underbrace{\sum_{n=1}^{N} \max\{0, 1 - y_n (\langle w, x_n \rangle + b)\}}_{\text{error term}}
 \]
 
-From this equation, we have our margin maximization and we have the error term. 
+From this equation, we have our margin maximization and we have the error term, which is the sum of our hinge loss. C is our penalty term. If we increase C then our margin will get smaller if there are points that are misclassified and are correctly classified but inside the margin. 
 
-\subsection{How to add Citations and a References List}
+\subsection{Citation and References List}
 
 
 

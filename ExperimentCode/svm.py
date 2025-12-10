@@ -286,6 +286,7 @@ class LinearSVM:
         C = self.config.C
 
         # 1. Compute the functional margin: y_i * (w^T x_i + b)
+        ## Can create this into a for loop for X samples but this is a python trick
         scores = X @ self.w + self.b
         functional_margin = y * scores
         
