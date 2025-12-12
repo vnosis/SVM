@@ -285,42 +285,36 @@ class LinearSVM:
         n_batch = X.shape[0]
         C = self.config.C
 
-        # 1. Compute the functional margin: y_i * (w^T x_i + b)
         ## Can create this into a for loop for X samples but this is a python trick
         scores = X @ self.w + self.b
         functional_margin = y * scores
         
-        # 2. Determine which samples violate the margin (margin < 1)
-        # These are the "misclassified" or "support vector" samples that contribute to the loss.
+        # Here are the "misclassified" or "support vector" samples that contribute to the loss.
         # The gradient is non-zero only for these samples.
         is_margin_violation = functional_margin < 1
         
-        # 3. Compute the gradient of the loss with respect to the weights (dw)
         # Gradient is: dw = w + C * (sum over violations) (-y_i * x_i)
-        
         # Start with the regularization gradient: dw = w
         dw = self.w.copy()
         
         # Calculate the gradient term for the data loss: -C * y_i * x_i
-        # Mask X and y to include only the samples that violate the margin (i.e., where loss > 0)
         X_violations = X[is_margin_violation]
         y_violations = y[is_margin_violation]
         
         # The sum part: -(y_violations * X_violations)
-        # Note: y_violations must be broadcasted correctly (multiplied row-wise)
+        # Note: y_violations must be broadcasted correctly multiplied row-wise
         gradient_sum = -np.dot(y_violations, X_violations) 
         
         # Add the data loss gradient term to dw, normalized by batch size for SGD
-        dw += C * (gradient_sum / n_batch)
+        dw += C * (gradient_sum/n_batch) 
 
-        # 4. Compute the gradient of the loss with respect to the bias (db)
+        # Compute the gradient of the loss with respect to the bias (db)
         # Gradient is: db = C * (sum over violations) (-y_i)
-        
         # The sum part: -sum(y_violations)
         gradient_sum_b = -np.sum(y_violations)
         
         # Calculate db, normalized by batch size for SGD
-        db = C * (gradient_sum_b / n_batch)
+        db = C * (gradient_sum_b/n_batch)
         
         return dw, float(db)
         
@@ -357,6 +351,7 @@ class LinearSVM:
         n_samples, n_features = X.shape
         scores = np.empty(n_samples, dtype=float)
 
+        #We are finding the scores by multipling the samples by the w. 
         for i in range(n_samples):
             x_i = X[i, :] 
             weighted_sum = np.dot(x_i, self.w)
